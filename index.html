@@ -6,39 +6,75 @@
     <title>Plumbus Radio - Transmisión Multiversal</title>
     <style>
         body {
-            background-color: #1a1a2e; /* Fondo oscuro espacial */
+            background-color: #1a1a2e; /* Color de respaldo */
+            background-image: url('fondo_app.jpg'); /* Tu imagen de fondo */
+            background-size: cover; /* Estira la imagen para cubrir toda la pantalla */
+            background-position: center; /* Centra la imagen */
+            background-repeat: no-repeat;
             color: #fff;
-            font-family: 'Courier New', Courier, monospace; /* Tipografía estilo consola/retro */
+            font-family: 'Courier New', Courier, monospace;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
         .player-container {
             background-color: #16213e;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); /* Brillo radiactivo estilo portal */
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
             text-align: center;
             max-width: 450px;
             width: 90%;
         }
         .logo {
             width: 100%;
+            height: 250px;
+            object-fit: contain;
             border-radius: 10px;
             margin-bottom: 15px;
             border: 2px solid #0f3460;
+            background-color: #0b132b;
+            transition: opacity 0.4s;
+        }
+        .title-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            background-color: #0f3460;
+            border-radius: 5px;
+            padding: 5px 0;
+            border: 1px solid #e94560;
         }
         #track-title {
+            display: inline-block;
             font-size: 1.2em;
-            margin-bottom: 15px;
-            color: #e94560; /* Color de acento neón */
-            min-height: 1.5em;
+            color: #e94560;
+            padding-left: 100%;
+            animation: marquee 12s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
         }
         audio {
             width: 100%;
             margin-bottom: 15px;
+        }
+        .volume-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+        input[type=range] {
+            margin-left: 10px;
+            cursor: pointer;
         }
         button {
             background-color: #0f3460;
@@ -59,21 +95,26 @@
 <body>
 
 <div class="player-container">
-    <!-- Reemplaza "logo.jpg" con el nombre del archivo de tu banner rectangular -->
-    <img src="logo.png" alt="Plumbus Radio" class="logo">
+    <img id="radio-cover" src="logo.png" alt="Plumbus Radio" class="logo">
     
-    <div id="track-title">Frotando el Fleeb...</div>
+    <div class="title-container">
+        <div id="track-title">Conectando al Multiverso...</div>
+    </div>
     
-    <!-- Controles nativos de HTML5 -->
     <audio id="audio-player" controls></audio>
     
+    <div class="volume-container">
+        <label for="volume-slider">Volumen:</label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+    </div>
+
     <div class="controls">
-        <button onclick="playNext()">Siguiente Track ⏭️</button>
+        <button onclick="playRandom()">Track Random 🎲</button>
     </div>
 </div>
 
 <script>
-    // Estructura de array similar a la gestión de assets o sonidos en un motor 2D
+    // AQUI PEGARÁS EL CÓDIGO NUEVO DEL SCRIPT PYTHON
     const playlist = [
     {
         "title": "🎵 Track: Sinfonia de estática (Hard)",
@@ -345,32 +386,67 @@
     }
 ];
 
-    let currentTrackIndex = 0;
+const covers = [
+    "https://www.googleapis.com/drive/v3/files/1qDfGdefel_D_V-H819nm4-h9APtCynXB?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1R-PAGojLoNMzwweKDhFXfN7Xxs5plVXf?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1Lrx2bF1ZMGn74QIh0sRTARvAOBBPoWso?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1ngxhuSpdqquJpvdeZ3XYvJdT7749xsen?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/13coGXCHPRvYH913ysA_SpqcYWk_1Q1c0?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/16Kev5xmm28NhifbqkE-XcxVNhhu3asA9?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1qeVD26TGUzmQljeHPS-ZVvaj5RAU7hlY?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1sn5uw1giflYBqCmy7C5dcdvV3srLy0rb?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/15t1zTjAQLpCNdvqgPprC34Jt5MW7m4vH?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1WBUv4YwH6p1N4lTQbF0HBMPcpd1NZaCs?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1BO2aW2S6d7EUbtf89CNb2onZ5Np86cMs?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU",
+    "https://www.googleapis.com/drive/v3/files/1blaoOt0ni0odFefwrrJ_MVHGfx8sN-Fz?alt=media&key=AIzaSyDy69y-cYSZ9yrMlXWTO6YmranCk6sqoYU"
+];
+
+    let currentTrackIndex = -1;
+    let currentCoverIndex = -1;
+    
     const player = document.getElementById('audio-player');
     const titleDisplay = document.getElementById('track-title');
+    const coverDisplay = document.getElementById('radio-cover');
+    const volumeSlider = document.getElementById('volume-slider');
 
-    function loadTrack(index) {
-        const track = playlist[index];
+    function playRandom() {
+        if(playlist.length === 0) return;
+        
+        let newIndex;
+        // La lógica para que no repita el mismo tema seguidito
+        do {
+            newIndex = Math.floor(Math.random() * playlist.length);
+        } while (newIndex === currentTrackIndex && playlist.length > 1);
+        
+        currentTrackIndex = newIndex;
+        const track = playlist[currentTrackIndex];
+        
         player.src = track.url;
         titleDisplay.innerText = track.title;
+        
+        // Cambiar la imagen aleatoriamente
+        if(covers.length > 0) {
+            let newCover;
+            do {
+                newCover = Math.floor(Math.random() * covers.length);
+            } while (newCover === currentCoverIndex && covers.length > 1);
+            currentCoverIndex = newCover;
+            coverDisplay.src = covers[currentCoverIndex];
+        }
+
         player.play();
     }
 
-    function playNext() {
-        currentTrackIndex++;
-        // Lógica de bucle: si llega al final, vuelve al principio
-        if (currentTrackIndex >= playlist.length) {
-            currentTrackIndex = 0; 
-        }
-        loadTrack(currentTrackIndex);
+    player.addEventListener('ended', playRandom);
+    
+    volumeSlider.addEventListener('input', function() {
+        player.volume = this.value;
+    });
+
+    // Iniciar con un tema random
+    if(playlist.length > 0) {
+        playRandom();
     }
-
-    // Event listener crucial: avanza de tema automáticamente cuando termina el actual
-    player.addEventListener('ended', playNext);
-
-    // Inicialización del reproductor al cargar la página
-    player.src = playlist[0].url;
-    titleDisplay.innerText = playlist[0].title;
 </script>
 
 </body>
