@@ -111,6 +111,9 @@
     <div class="controls">
         <button onclick="playRandom()">Track Random 🎲</button>
     </div>
+	<a id="download-link" href="#" target="_blank" style="text-decoration: none;">
+    <button type="button">Descargar Track 💾</button>
+</a>
 </div>
 
 <script>
@@ -436,7 +439,7 @@ const covers = [
         const track = playlist[currentTrackIndex];
         
         player.src = track.url;
-        titleDisplay.innerText = track.title;
+        titleDisplay.innerText = track.title;document.getElementById('download-link').href = track.url;
         
         // Cambiar la imagen aleatoriamente
         if(covers.length > 0) {
