@@ -87,15 +87,18 @@
         }
         #track-title {
             display: inline-block;
+            white-space: nowrap;
+            padding: 0 30px;
             font-size: 1.1em;
             font-weight: 600;
             color: #fff;
-            padding-left: 100%;
-            animation: marquee 12s linear infinite;
         }
-        @keyframes marquee {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+        #track-title.corre {
+            animation: vaiven var(--dur, 10s) ease-in-out infinite alternate;
+        }
+        @keyframes vaiven {
+            0%, 12%   { transform: translateX(0); }
+            88%, 100% { transform: translateX(var(--mover, 0px)); }
         }
 
         /* El reproductor nativo del navegador queda oculto; usamos el nuestro */
@@ -210,6 +213,51 @@
             text-transform: uppercase;
             color: #9fb0d6;
         }
+    
+        /* ===== Redes y café ===== */
+        .social {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .social-fila {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .social-btn {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 600;
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            transition: transform 0.15s, background 0.25s;
+        }
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+            transform: translateY(-1px);
+        }
+        .cafe-btn {
+            display: block;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95em;
+            padding: 12px 18px;
+            border-radius: 999px;
+            color: #2b1a00;
+            background: linear-gradient(135deg, #ffd45e, #ffb02e);
+            box-shadow: 0 6px 18px rgba(255, 176, 46, 0.30);
+            transition: transform 0.15s, box-shadow 0.25s;
+        }
+        .cafe-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(255, 176, 46, 0.45);
+        }
     </style>
 </head>
 <body>
@@ -243,6 +291,15 @@
         <a id="download-link" href="#" target="_blank" style="text-decoration: none;">
             <button type="button">Descargar 💾</button>
         </a>
+    </div>
+
+    <div class="social">
+        <div class="social-fila">
+            <a class="social-btn" href="https://suno.com/@edgardwesler" target="_blank" rel="noopener noreferrer">🎧 Suno</a>
+            <a class="social-btn" href="https://www.youtube.com/@edgardweslerTV" target="_blank" rel="noopener noreferrer">▶️ YouTube</a>
+            <a class="social-btn" href="https://www.instagram.com/plumbusradiofmonline/" target="_blank" rel="noopener noreferrer">📸 Instagram</a>
+        </div>
+        <a class="cafe-btn" href="https://cafecito.app/edgardwesler" target="_blank" rel="noopener noreferrer">☕ Invitame un cafecito</a>
     </div>
 
     <!-- Contador de visitas anti-bloqueos -->
@@ -569,6 +626,21 @@ const covers = [
 
     let likedTracks = JSON.parse(localStorage.getItem('plumbus_likes')) || {};
 
+    function mostrarTitulo(texto) {
+        titleDisplay.innerText = texto;
+        titleDisplay.classList.remove('corre');
+        titleDisplay.style.removeProperty('--mover');
+        // Medimos cuando el navegador ya acomodó el texto
+        requestAnimationFrame(function() {
+            const sobra = titleDisplay.offsetWidth - titleDisplay.parentElement.clientWidth;
+            if (sobra > 0) {
+                titleDisplay.style.setProperty('--mover', (-sobra) + 'px');
+                titleDisplay.style.setProperty('--dur', Math.max(6, sobra / 25) + 's');
+                titleDisplay.classList.add('corre');
+            }
+        });
+    }
+
     function playRandom() {
         if(playlist.length === 0) return;
         
@@ -581,7 +653,7 @@ const covers = [
         const track = playlist[currentTrackIndex];
         
         player.src = track.url;
-        titleDisplay.innerText = track.title;
+        mostrarTitulo(track.title);
         downloadLink.href = track.url;
         
         // Verificar Likes guardados
@@ -608,7 +680,7 @@ const covers = [
             intento.catch(function(e) {
                 // El navegador bloquea el sonido automático al abrir la página: no es un fallo de la canción
                 if (e.name === 'NotAllowedError') {
-                    titleDisplay.innerText = '▶️ Tocá play para arrancar: ' + track.title;
+                    mostrarTitulo('▶️ Tocá play para arrancar: ' + track.title);
                 }
             });
         }
@@ -653,12 +725,12 @@ const covers = [
         fallosSeguidos++;
 
         if (fallosSeguidos >= playlist.length) {
-            titleDisplay.innerText = '⚠️ No se pudo cargar ninguna canción. Probá de nuevo más tarde.';
+            mostrarTitulo('⚠️ No se pudo cargar ninguna canción. Probá de nuevo más tarde.');
             return;
         }
 
         const nombre = playlist[currentTrackIndex].title;
-        titleDisplay.innerText = '⚠️ No cargó: ' + nombre + ' (pasando a la siguiente...)';
+        mostrarTitulo('⚠️ No cargó: ' + nombre + ' (pasando a la siguiente...)');
         setTimeout(playRandom, 2500);
     });
 
