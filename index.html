@@ -108,12 +108,18 @@
         <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
     </div>
 
-    <div class="controls">
-        <button onclick="playRandom()">Track Random 🎲</button>
-    </div>
-	<a id="download-link" href="#" target="_blank" style="text-decoration: none;">
-    <button type="button">Descargar Track 💾</button>
-</a>
+    <div class="controls" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    <button onclick="playRandom()">Track Random 🎲</button>
+    <button id="like-btn" onclick="likeCurrentTrack()">Me Gusta 👍</button>
+    <a id="download-link" href="#" target="_blank" style="text-decoration: none;">
+        <button type="button">Descargar 💾</button>
+    </a>
+</div>
+
+<!-- Contador de visitas retro -->
+<div style="margin-top: 20px; text-align: center;">
+    <span style="font-size: 0.9em; color: #e94560;">Oyentes Multiversales:</span><br>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=17950555&style=0036&nbdigits=5&type=page&initCount=42" title="Contador Plumbus" alt="Contador Plumbus" border="0" style="margin-top: 5px;" />
 </div>
 
 <script>
@@ -425,6 +431,8 @@ const covers = [
     const titleDisplay = document.getElementById('track-title');
     const coverDisplay = document.getElementById('radio-cover');
     const volumeSlider = document.getElementById('volume-slider');
+	const likeBtn = document.getElementById('like-btn');
+      let likedTracks = JSON.parse(localStorage.getItem('plumbus_likes')) || {};
 
     function playRandom() {
         if(playlist.length === 0) return;
@@ -449,6 +457,13 @@ const covers = [
             } while (newCover === currentCoverIndex && covers.length > 1);
             currentCoverIndex = newCover;
             coverDisplay.src = covers[currentCoverIndex];
+			if (likedTracks[track.title]) {
+    likeBtn.style.backgroundColor = '#e94560';
+    likeBtn.innerText = '¡Te gusta! ❤️';
+        } else {
+    likeBtn.style.backgroundColor = '#0f3460';
+    likeBtn.innerText = 'Me Gusta 👍';
+    }
         }
 
         player.play();
@@ -463,6 +478,23 @@ const covers = [
     // Iniciar con un tema random
     if(playlist.length > 0) {
         playRandom();
+    }
+	function likeCurrentTrack() {
+    if (currentTrackIndex === -1) return;
+    const currentTitle = playlist[currentTrackIndex].title;
+    
+    if (likedTracks[currentTitle]) {
+        delete likedTracks[currentTitle]; // Quitar Like
+        likeBtn.style.backgroundColor = '#0f3460';
+        likeBtn.innerText = 'Me Gusta 👍';
+    } else {
+        likedTracks[currentTitle] = true; // Dar Like
+        likeBtn.style.backgroundColor = '#e94560';
+        likeBtn.innerText = '¡Te gusta! ❤️';
+    }
+    
+    // Guarda la memoria en el navegador
+    localStorage.setItem('plumbus_likes', JSON.stringify(likedTracks));
     }
 </script>
 
