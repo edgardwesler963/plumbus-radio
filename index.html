@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plumbus Radio - Transmisión Multiversal</title>
+	       @keyframes latido {
+           0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
+           15% { transform: scale(1.05); box-shadow: 0 0 40px rgba(233, 69, 96, 0.8); }
+           30% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
+           45% { transform: scale(1.05); box-shadow: 0 0 40px rgba(233, 69, 96, 0.8); }
+           100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
+        }
+            .latido-activo {
+            animation: latido 1.3s infinite;
+            border-color: #e94560 !important;
+        } 
     <style>
         body {
             background-color: #1a1a2e;
@@ -431,6 +442,13 @@ const covers = [
     const player = document.getElementById('audio-player');
     const titleDisplay = document.getElementById('track-title');
     const coverDisplay = document.getElementById('radio-cover');
+	      player.addEventListener('play', function() {
+          coverDisplay.classList.add('latido-activo');
+          });
+
+          player.addEventListener('pause', function() {
+          coverDisplay.classList.remove('latido-activo');
+          });
     const volumeSlider = document.getElementById('volume-slider');
 	const likeBtn = document.getElementById('like-btn');
       let likedTracks = JSON.parse(localStorage.getItem('plumbus_likes')) || {};
