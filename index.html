@@ -6,19 +6,20 @@
     <title>Plumbus Radio - Transmisión Multiversal</title>
     <style>
         body {
-            background-color: #1a1a2e; /* Color de respaldo */
-            background-image: url('fondo_app.jpg'); /* Tu imagen de fondo */
-            background-size: cover; /* Estira la imagen para cubrir toda la pantalla */
-            background-position: center; /* Centra la imagen */
+            background-color: #1a1a2e;
+            background-image: url('fondo_app.jpg');
+            background-size: cover;
+            background-position: center;
             background-repeat: no-repeat;
             color: #fff;
             font-family: 'Courier New', Courier, monospace;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh; /* Permite que la pantalla crezca si hay más botones */
             margin: 0;
-            overflow: hidden;
+            padding: 20px; /* Evita que el reproductor toque los bordes del celular */
+            box-sizing: border-box;
         }
         .player-container {
             background-color: #16213e;
@@ -114,13 +115,13 @@
     <a id="download-link" href="#" target="_blank" style="text-decoration: none;">
         <button type="button">Descargar 💾</button>
     </a>
-</div>
+    </div>
 
-<!-- Contador de visitas retro -->
-<div style="margin-top: 20px; text-align: center;">
+<!-- Contador de visitas anti-bloqueos -->
+    <div style="margin-top: 20px; text-align: center;">
     <span style="font-size: 0.9em; color: #e94560;">Oyentes Multiversales:</span><br>
-    <img src="https://hitwebcounter.com/counter/counter.php?page=17950555&style=0036&nbdigits=5&type=page&initCount=42" title="Contador Plumbus" alt="Contador Plumbus" border="0" style="margin-top: 5px;" />
-</div>
+    <img src="https://api.visitorbadge.io/api/visitors?path=edgardwesler963.github.io/plumbus-radio&label=Visitas&labelColor=%230f3460&countColor=%23e94560" alt="Contador de Visitas" style="margin-top: 5px; border-radius: 5px;" />
+    </div>
 
 <script>
     // AQUI PEGARÁS EL CÓDIGO NUEVO DEL SCRIPT PYTHON
@@ -458,12 +459,12 @@ const covers = [
             currentCoverIndex = newCover;
             coverDisplay.src = covers[currentCoverIndex];
 			if (likedTracks[track.title]) {
-    likeBtn.style.backgroundColor = '#e94560';
-    likeBtn.innerText = '¡Te gusta! ❤️';
-        } else {
-    likeBtn.style.backgroundColor = '#0f3460';
-    likeBtn.innerText = 'Me Gusta 👍';
-    }
+            likeBtn.style.backgroundColor = '#e94560';
+            likeBtn.innerText = '¡Te gusta! ❤️';
+            } else {
+            likeBtn.style.backgroundColor = '#0f3460';
+            likeBtn.innerText = 'Me Gusta 👍';
+    
         }
 
         player.play();
