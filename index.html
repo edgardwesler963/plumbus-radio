@@ -311,7 +311,15 @@
             coverDisplay.src = covers[currentCoverIndex];
         }
 
-        player.play();
+        const intento = player.play();
+        if (intento !== undefined) {
+            intento.catch(function(e) {
+                // El navegador bloquea el sonido automático al abrir la página: no es un fallo de la canción
+                if (e.name === 'NotAllowedError') {
+                    titleDisplay.innerText = '▶️ Tocá play para arrancar: ' + track.title;
+                }
+            });
+        }
     }
 
     function likeCurrentTrack() {
@@ -340,7 +348,28 @@
     });
 
     player.addEventListener('ended', playRandom);
-    
+
+    // Si una canción no carga, avisa y salta a otra (con un tope para no quedar en bucle)
+    let fallosSeguidos = 0;
+
+    player.addEventListener('playing', function() {
+        fallosSeguidos = 0;
+    });
+
+    player.addEventListener('error', function() {
+        if (currentTrackIndex === -1) return;
+        fallosSeguidos++;
+
+        if (fallosSeguidos >= playlist.length) {
+            titleDisplay.innerText = '⚠️ No se pudo cargar ninguna canción. Probá de nuevo más tarde.';
+            return;
+        }
+
+        const nombre = playlist[currentTrackIndex].title;
+        titleDisplay.innerText = '⚠️ No cargó: ' + nombre + ' (pasando a la siguiente...)';
+        setTimeout(playRandom, 2500);
+    });
+
     volumeSlider.addEventListener('input', function() {
         player.volume = this.value;
     });
